@@ -21,7 +21,7 @@
                 <br>
                 <br>
                 <br>
-                <vue-markdown v-highlight>
+                <vue-markdown>
                     # 一、获取token
                     接口路径：/router/rest/V1
                     请求方式：HTTP POST
@@ -88,7 +88,7 @@ export default {
         this.getHTML5();
     },
     mounted(){
-        
+        this.judgeHash();
     },
     methods:{
         // 获取HTML5文章

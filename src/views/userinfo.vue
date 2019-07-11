@@ -271,10 +271,10 @@
                     </el-form-item>
                 </el-form>
                 <div slot="footer">
-                    <Button type="error" size="large" long @click="calcelEdit()">取消修改</Button>
+                    <Button type="error" size="large" long @click="calcelEdit('editForm')">取消修改</Button>
                 </div>
                 <div slot="footer" style="margin-top:5px;">
-                    <Button type="success" size="large" long @click="submitEdit()">确定修改</Button>
+                    <Button type="success" size="large" long @click="submitEdit('editForm')">确定修改</Button>
                 </div>
             </Modal>
             <!-- 购买课程模态框 -->
@@ -518,20 +518,25 @@ export default {
             this.editmodal = true;
         },
         // 提交修改信息时
-        submitEdit(){
-            this.newUserInfo.email = this.getUserInfo.email;
-            this.newUserInfo.avatar = this.avatarName;
-            this.$axios.post("http://localhost:3001/api/user/updata/token", this.newUserInfo)
-                            .then(res => {
-                                localStorage.setItem("jwtToken", res.data.token)
-                                const decoded = jwt_decode(res.data.token);
-                                this.$store.commit("user", decoded);
-                                this.$store.commit("isAuthorizated", true);
-                                this.$store.commit("avatar", decoded.avatar);
-                                this.editmodal = false;
-                                this.newUserInfo.avatar = require("../assets/avatar/" + this.avatarName);
-                                this.$Message.info("修改成功");
-                            })
+        submitEdit(formName){
+            this.$refs[formName].validate(valid => {
+                if(valid){
+                    this.newUserInfo.email = this.getUserInfo.email;
+                    this.newUserInfo.avatar = this.avatarName;
+                    this.$axios.post("http://localhost:3001/api/user/updata/token", this.newUserInfo)
+                                    .then(res => {
+                                        localStorage.setItem("jwtToken", res.data.token)
+                                        const decoded = jwt_decode(res.data.token);
+                                        this.$store.commit("user", decoded);
+                                        this.$store.commit("isAuthorizated", true);
+                                        this.$store.commit("avatar", decoded.avatar);
+                                        this.editmodal = false;
+                                        this.newUserInfo.avatar = require("../assets/avatar/" + this.avatarName);
+                                        this.$Message.info("修改成功");
+                                    })
+                }
+            })
+            
         },
         // 取消修改信息
         calcelEdit(){
