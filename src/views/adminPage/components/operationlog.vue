@@ -1,0 +1,220 @@
+<template>
+    <div class="registerlog">
+        <Row style="padding:10px 0px 30px 0px;">
+            <Col style="padding:0px 0px 0px 25px;" span="9">
+                <el-date-picker
+                v-model="selectDate"
+                size="small"
+                type="datetimerange"
+                :picker-options="pickerOptions"
+                range-separator="至"
+                start-placeholder="开始日期"
+                format="yyyy/MM/dd HH:mm:ss"
+                end-placeholder="结束日期"
+                align="right">
+                </el-date-picker>
+            </Col>
+            <Col span="7">
+                <Button type="primary" @click="filterloginlog()">筛选</Button>
+            </Col>
+            <Col span="4">
+                <Button type="primary" v-if="isShow" @click="restore()">还原</Button>
+            </Col>
+        </Row>
+        <!-- 表格数据 -->
+        <el-table
+            :data="allOperaLogs"
+            class="registerlog-table"
+            style="width: 100%"
+            border
+            :default-sort = "{prop: 'date', order: 'descending'}"
+            >
+            <el-table-column
+            type="index"
+            label="序号"
+            align="center"
+            width="80">
+            </el-table-column>
+            <el-table-column
+            prop="from"
+            label="目标类型"
+            align="center"
+            width="250">
+            </el-table-column>
+            <el-table-column
+            label="目标ID"
+            prop="_id"
+            sortable
+            align="center"
+            width="250">
+            </el-table-column>
+            <el-table-column
+            prop="type"
+            label="操作类型"
+            sortable
+            align="center"
+            width="250">
+            </el-table-column>
+            <el-table-column
+            prop="date"
+            align="center"
+            label="操作时间">
+            </el-table-column>
+        </el-table>
+        <!-- 分页 -->
+        <Row>
+            <Col span="24" style="text-align:right;padding:5px 10px;">
+                <el-pagination
+                    v-if='paginations.total > 0'
+                    :page-sizes="paginations.page_sizes"
+                    :page-size="paginations.page_size"
+                    :layout="paginations.layout"
+                    :total="paginations.total"
+                    :current-page.sync='paginations.page_index'
+                    @current-change='handleCurrentChange'
+                    @size-change='handleSizeChange'>
+                </el-pagination>
+            </Col>
+        </Row>
+    </div>
+</template>
+
+<script>
+export default {
+    name:"registerlog",
+    data(){
+        return{
+            isShow:false,
+            allOperaLogs:[],
+            allTableData:[],
+            whatregisterlog:"",
+            paginations: {
+                page_index: 1, // 当前位于哪页
+                total: 0, // 总数
+                page_size: 10, // 1页显示多少条
+                page_sizes: [10, 20, 30, 40], //每页显示多少条
+                layout: "total, sizes, prev, pager, next, jumper" // 翻页属性
+            },
+            // 日期选择
+            selectDate:"",
+            pickerOptions: {
+                shortcuts: [{
+                    text: '最近一周',
+                    onClick(picker) {
+                    const end = new Date();
+                    const start = new Date();
+                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                    picker.$emit('pick', [start, end]);
+                    }
+                }, {
+                    text: '最近一个月',
+                    onClick(picker) {
+                    const end = new Date();
+                    const start = new Date();
+                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                    picker.$emit('pick', [start, end]);
+                    }
+                }, {
+                    text: '最近三个月',
+                    onClick(picker) {
+                    const end = new Date();
+                    const start = new Date();
+                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                    picker.$emit('pick', [start, end]);
+                    }
+                }]
+            },
+        }
+    },
+    created(){
+        this.getOperaLogs();
+    },
+    methods:{
+        // 设置当前页
+        handleCurrentChange(page) {
+            // 获取当前页
+            let sortnum = this.paginations.page_size * (page - 1);
+            let table = this.allTableData.filter((item, index) => {
+                return index >= sortnum;
+            });
+            // 设置默认分页数据
+            this.allOperaLogs = table.filter((item, index) => {
+                return index < this.paginations.page_size;
+            });
+            this.allOperaLogs = table.filter((item, index) => {
+                return index < this.paginations.page_size;
+            });
+        },
+        // 改变每页条数
+        handleSizeChange(page_size) {
+            // 切换size
+            this.paginations.page_index = 1;
+            this.paginations.page_size = page_size;
+            this.allOperaLogs = this.allTableData.filter((item, index) => {
+                return index < page_size;
+            });
+        },
+        // 设置的分页
+        setPaginations() {
+            // 总页数
+            this.paginations.total = this.allTableData.length;
+            this.paginations.page_index = 1;
+            this.paginations.page_size = 10;
+            // 设置默认分页数据
+            this.allOperaLogs = this.allTableData.filter((item, index) => {
+                return index < this.paginations.page_size;
+            });
+        },
+        // 获取所有注册日志
+        getOperaLogs(){
+            this.$axios.get("http://localhost:3001/api/admin/operation")
+                    .then(res => {
+                        this.allOperaLogs = res.data;
+                        this.allTableData = res.data;
+                        this.setPaginations();
+                    })
+        },
+        // 还原表格
+        restore(){
+            this.isShow = false;
+            this.selectDate = "";
+            this.getOperaLogs();
+        },
+        // 筛选数据
+        filterloginlog(){
+            if(this.selectDate.length){
+                const startDate = new Date(this.selectDate[0]);
+                const endDate = new Date(this.selectDate[1]);
+                this.$axios.get("http://localhost:3001/api/admin/operation")
+                        .then(res => {
+                            let filters = [];
+                            res.data.forEach(item => {
+                                const time = new Date(item.date);
+                                if(time.getTime() >= startDate.getTime() && time.getTime() <= endDate.getTime()){
+                                    filters[filters.length] = item;
+                                }
+                            })
+                            this.allOperaLogs = filters;
+                            this.allTableData = filters;
+                            this.setPaginations();
+                            this.isShow = true;
+                        })
+            }else{
+                this.$Modal.warning({
+                    title: "警告",
+                    content: "请选择日期"
+                });
+            }
+        }
+    }
+}
+</script>
+
+<style lang="less" scoped>
+.registerlog{
+    width: 100%;
+
+
+
+}
+</style>
