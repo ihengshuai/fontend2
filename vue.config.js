@@ -15,6 +15,7 @@ module.exports = {
           $: "jquery",
           jQuery: "jquery"
         })
-      ]
+      ],
+      externals: 'hls.js'    //  忽略hls.js报的错
     }
   }

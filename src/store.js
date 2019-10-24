@@ -12,6 +12,8 @@ import Vuex from 'vuex'
 // 引入模块
 import userStore from '@/store/userstore';
 import searchStore from '@/store/searchstore';
+import adminStore from "@/store/adminstore";
+import musicStore from "@/store/musicstore";
 
 Vue.use(Vuex)
 
@@ -30,16 +32,23 @@ const state = {
         {value:'假期总是过得特别快...我已无力吐槽...'},
     ],
     // 网站主题
-    websiteTheme:localStorage.getItem("websiteTheme")
+    websiteTheme:localStorage.getItem("websiteTheme"),
+    callback:""  // 记录回掉的地址
 };
 const getters = {
     // 网站主题
-    websiteTheme:state => state.websiteTheme
+    websiteTheme:state => state.websiteTheme,
+    // 回调地址
+    callback:state => state.callback
 };
 const mutations = {
     // 网站主题
     websiteTheme(state, currentTheme){
         state.websiteTheme = currentTheme;
+    },
+    // 回调地址
+    callback(state, backURL){
+        state.callback = backURL
     }
 };
 
@@ -49,7 +58,9 @@ const store = new Vuex.Store({
     mutations,
     modules:{
       userStore,
-      searchStore
+      searchStore,
+      adminStore,
+      musicStore
     }
 })
 

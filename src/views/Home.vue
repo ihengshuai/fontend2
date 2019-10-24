@@ -2,11 +2,9 @@
     <div class="home">
         <!-- 导航栏 -->
         <PCNAV></PCNAV>
-
         <router-view/>
-        
         <!-- 脚注部分 -->
-        <div class="footer">
+        <div v-if="isShow" class="footer">
             <div class="footer-top">
                 <div class="left">
                     <p style="padding-bottom:20px;">
@@ -23,9 +21,13 @@
                     </div>
                     <div class="item2">
                         <h3>联系方式</h3>
-                        <p>新浪微博</p>
+                        <p>
+                            <a style="color:#fff;" target="blank" href="https://weibo.com/p/1005055229656631/home?from=page_100505_profile&wvr=6&mod=data&is_hot=1#place">新浪微博</a>
+                        </p>
                         <p>腾讯QQ</p>
-                        <p>电子邮件</p>
+                        <p>
+                            <a style="color:#fff;" href="mailto:wsm_1105@163.com?subject=' '&cc=wsm_1105@163.com&body=请写信..">联系邮箱</a>
+                        </p>
                     </div>
                     <div class="item3">
                         <h3>赞助商</h3>
@@ -40,19 +42,26 @@
                 <p>京ICP备11008151号 | 京公网安备11010802014853</p>
             </div>
         </div>
+
+        <!-- 音乐播放器 -->
+        <musicplayer v-if="showMusicPlayer"></musicplayer>
     </div>
 </template>
 
 <script>
 import PCNAV from '@/components/pcnav';
+// import musicplayer from "@/components/musicplayer";
+import musicplayer from "@/views/userPage/enjoymusic";
 export default {
     name:"home",
     components:{
-        "PCNAV":PCNAV
+        "PCNAV":PCNAV,
+        "musicplayer":musicplayer
     },
     data(){
         return{
-
+            isShow:true,
+            showMusicPlayer:true,
         }
     },
     methods:{
@@ -75,6 +84,27 @@ export default {
     },
     created(){
         this.browserRedirect();
+        if(this.$route.path == "/home/html5" || this.$route.path == "/home/css" || this.$route.path == "/home/javascript" || this.$route.path == "/home/vip/course" || this.$route.path == "/home/vip/course/html5/play"|| this.$route.path == "/home/vip/course/css/play" || this.$route.path == "/home/vip/course/javascript/play" || this.$route.path == "/home/messagewall" || this.$route.path == "/home/enjoymusic"|| this.$route.path == "/home/aboutme"){
+            this.isShow = false;
+        }
+        if(this.$route.path == "/home/enjoymusic"){
+            this.showMusicPlayer = false;
+        }
+    },
+    watch:{
+        $route(to, from){
+            if(to.path == "/home/vip/course" || to.path == "/home/html5" || to.path == "/home/css" || to.path == "/home/javascript" || to.path == "/home/vip/course/html5/play" || to.path == "/home/vip/course/css/play" || to.path == "/home/vip/course/javascript/play" || this.$route.path == "/home/messagewall" || this.$route.path == "/home/enjoymusic" || this.$route.path == "/home/aboutme"){
+                this.isShow = false;
+            }else{
+                this.isShow = true;
+            }
+            if(to.path == "/home/enjoymusic"){
+                this.showMusicPlayer = false;
+            }else{
+                this.showMusicPlayer = true;
+            }
+
+        }
     }
 }
 </script>

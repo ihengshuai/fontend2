@@ -11,7 +11,7 @@
                 <div  class="showcard card-img-item" v-for="(item, index) in homepagedata" :key="index">
                         <router-link :to="item.url">
                             <el-card :body-style="{ padding: '0px' }">
-                                <el-image :src="item.img" class="image" lazy>
+                                <el-image :src="'http://localhost:3001/api/index/img?name='+ item.img" class="image" lazy>
                                     <div slot="placeholder" class="image-slot">
                                         加载中<span class="dot">...</span>
                                     </div>
@@ -68,9 +68,6 @@ export default {
                 this.$axios.get("http://localhost:3001/api/index")
                         .then(res => {
                             var homedata = res.data;
-                            homedata.forEach((item,index) => {
-                                item.img = require("../assets/imgs/" + item.img);
-                            })
                             localStorage.setItem("websiteTheme", "dark"); // 设置主题
                             localStorage.setItem("homepage", JSON.stringify(homedata));
                             this.homepagedata = homedata;
@@ -143,7 +140,7 @@ export default {
                 color: #888;
                 width: 100%;
                 line-height: 20px;
-                height: 100px;
+                height: 80px;
                 // 单行文字溢出
                 // word-break: break-word;
                 // white-space: nowrap;
@@ -163,12 +160,12 @@ export default {
                 border-radius: 10px;
             }
             .el-card:hover{
-                background-color: rgb(247, 243, 243);
+                // background-color: rgb(247, 243, 243);
                 // transform: scale(1.05);
             }
             .el-card:hover .image{
                 // background-color: #fff;
-                transition: 500ms ease-in-out;
+                transition: 700ms ease-in-out;
                 transform: scale(1.15);
             }
             .bottom {

@@ -16,6 +16,8 @@ axios.interceptors.request.use(config => {
     wsmLoading.startLoading("拼命加载中...");
     if(localStorage.jwtToken){
         config.headers.Authorization = localStorage.jwtToken;
+    }else if(localStorage.adminToken){
+        config.headers.Authorization = localStorage.adminToken;
     }
 
     return config;
@@ -32,6 +34,8 @@ axios.interceptors.response.use(response => {
     const {status} = error.response;
     if(status == 401){
         localStorage.removeItem("jwtToken");
+        localStorage.removeItem("adminToken");
+        localStorage.removeItem("users");
         router.push("/login");
         Message.error({
             content:"密码失效,请重新登录",

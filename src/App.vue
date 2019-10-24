@@ -12,14 +12,14 @@
             <div style="text-align:left">
                 <p style="padding-bottom:10px;">今天签到了吗？请选择您此刻的<span style="color:#f40;">心情图片</span>并写下<span style="color:blue;">今天最想说的话！</span></p>
                 <div class="selectmood">
-                    <img @click="mymood('开心')" id="开心" src="./assets/imgs/kx.gif" alt="开心">
-                    <img @click="mymood('难过')" id="难过" src="./assets/imgs/ng.gif" alt="">
-                    <img @click="mymood('郁闷')" id="郁闷" src="./assets/imgs/ym.gif" alt="">
-                    <img @click="mymood('无聊')" id="无聊" src="./assets/imgs/wl.gif" alt="">
-                    <img @click="mymood('生气')" id="生气" src="./assets/imgs/nu.gif" alt="">
-                    <img @click="mymood('擦汗')" id="擦汗" src="./assets/imgs/ch.gif" alt="">
-                    <img @click="mymood('奋斗')" id="奋斗" src="./assets/imgs/fd.gif" alt="">
-                    <img @click="mymood('慵懒')" id="慵懒" src="./assets/imgs/yl.gif" alt="">
+                    <img @click="mymood('开心')" id="开心" src="./assets/face/kx.gif" alt="开心">
+                    <img @click="mymood('难过')" id="难过" src="./assets/face/ng.gif" alt="">
+                    <img @click="mymood('郁闷')" id="郁闷" src="./assets/face/ym.gif" alt="">
+                    <img @click="mymood('无聊')" id="无聊" src="./assets/face/wl.gif" alt="">
+                    <img @click="mymood('生气')" id="生气" src="./assets/face/nu.gif" alt="">
+                    <img @click="mymood('擦汗')" id="擦汗" src="./assets/face/ch.gif" alt="">
+                    <img @click="mymood('奋斗')" id="奋斗" src="./assets/face/fd.gif" alt="">
+                    <img @click="mymood('慵懒')" id="慵懒" src="./assets/face/yl.gif" alt="">
                 </div>
                 <p style="padding-left:0px;">您的心情: <span style="color:#aaa">{{mood}}</span> </p>
                 <p style="padding:10px 0px;">
@@ -87,11 +87,14 @@ export default {
     created(){
         this.judgeSign();
         this.judgeLogin();
+        this.welcome();
     },
     watch:{
         $route(to, from){
             this.judgeSign();
+            this.welcome();
         }
+        
     },
     methods:{
         // 判断有没有签到
@@ -157,6 +160,26 @@ export default {
                 this.$store.commit("isAuthorizated", true);
                 this.$store.commit("avatar", decoded.avatar);
             }
+            if(localStorage.adminToken){
+                this.$store.commit("isAdminAuthorization", true);
+                this.$store.commit("setAdmin", jwt_decode(localStorage.adminToken));
+            }
+        },
+        // 控制台欢迎语
+        welcome(){
+            console.log(`%c
+    ____________________________
+        欢迎新同学来本站学习
+        我是小萌  
+        竭诚为你服务
+        如有什么不懂得
+        请留言,我们会尽快解决
+        学的开心哦（〜^㉨^)〜
+        谢谢~
+    ____________________________
+    ▄︻┻┳═一……
+    本站永久地址:http://localhost:8080
+            `,'color:#1E90FF;font-size:14px;font-family:"隶书"')
         }
     },
     computed:{
@@ -187,6 +210,11 @@ export default {
                 }, 1000);
             }
         });
+    },
+    destroyed(){
+        window.addEventListener('beforeunload', ()=> {
+            localStorage.clear();
+        })
     }
 }
 </script>
@@ -198,7 +226,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   width: 100%;
   
-    
+   
   
 }
 // 模态框
@@ -244,4 +272,7 @@ export default {
       background: rgba(236, 233, 233, 0.1);
       -moz-box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
   }
+
+
+
 </style>
