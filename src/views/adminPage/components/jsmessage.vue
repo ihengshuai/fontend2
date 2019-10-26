@@ -38,7 +38,7 @@
             align="center"
             width="120">
                 <template slot-scope="scope">
-                    <Avatar :src="require('../../../assets/avatar/' + scope.row.avatar)" size="large" />
+                    <Avatar :src="'http://localhost:3001/api/user/avatar?email=' + scope.row.email" size="large" />
                 </template>
             </el-table-column>
             <el-table-column
