@@ -14,7 +14,7 @@
     "echarts": "^4.2.1",
     "element-ui": "^2.10.0",
     "iview": "^3.4.2",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "jwt-decode": "^2.2.0",
     "mavon-editor": "^2.7.5",
     "social-share.js": "^1.0.16",
